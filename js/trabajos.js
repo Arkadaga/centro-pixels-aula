@@ -49,7 +49,7 @@ async function renderTrabajos() {
           <div class="entrega-file">${entregaFileLink(entrega)}<span class="text-sm text-muted"> — pendiente de calificación</span></div>
         </div>` :
       `<div style="border-top:1px solid var(--border-light);padding-top:12px;margin-top:8px">
-        <div class="form-group"><label>Archivo</label><input type="file" id="entrega-file-${t.id}" style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
+        <div class="form-group"><label>Archivos</label><input type="file" id="entrega-file-${t.id}" multiple style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
         <div class="form-group"><label>Comentario</label><textarea id="entrega-comment-${t.id}" placeholder="Comentario sobre la entrega..."></textarea></div>
         <button class="btn btn-primary" onclick="submitEntrega('${t.id}')">Entregar trabajo</button>
         <div id="entrega-progress-${t.id}" class="mono text-xs text-muted mt-8" style="display:none">Subiendo archivo...</div>
@@ -61,35 +61,46 @@ async function renderTrabajos() {
 async function submitEntrega(trabajoId) {
   const fileInput = document.getElementById('entrega-file-' + trabajoId);
   const comentario = document.getElementById('entrega-comment-' + trabajoId).value.trim();
-  if (!fileInput.files || !fileInput.files[0]) { toast('Selecciona un archivo'); return; }
+  if (!fileInput.files || fileInput.files.length === 0) { toast('Selecciona al menos un archivo'); return; }
 
-  const file = fileInput.files[0];
+  const files = Array.from(fileInput.files);
   const progress = document.getElementById('entrega-progress-' + trabajoId);
   progress.style.display = 'block';
-  progress.textContent = 'Subiendo archivo...';
 
-  // Upload to Supabase Storage
-  const ext = file.name.split('.').pop();
-  const path = `${currentUser.id}/${trabajoId}/${Date.now()}_${file.name}`;
-  const { error: uploadError } = await sb.storage.from('entregas').upload(path, file);
-  if (uploadError) { toast('Error subiendo: ' + uploadError.message); progress.style.display = 'none'; return; }
+  const fileNames = [];
+  const fileUrls = [];
 
-  // Get public URL
-  const { data: urlData } = sb.storage.from('entregas').getPublicUrl(path);
-  const fileUrl = urlData.publicUrl;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    progress.textContent = `Subiendo archivo ${i + 1} de ${files.length}...`;
 
-  // Save to DB
+    const path = `${currentUser.id}/${trabajoId}/${Date.now()}_${file.name}`;
+    const { error: uploadError } = await sb.storage.from('entregas').upload(path, file);
+    if (uploadError) { toast('Error subiendo ' + file.name + ': ' + uploadError.message); progress.style.display = 'none'; return; }
+
+    const { data: urlData } = sb.storage.from('entregas').getPublicUrl(path);
+    fileNames.push(file.name);
+    fileUrls.push(urlData.publicUrl);
+  }
+
   const { error } = await sb.from('entregas').insert({
-    trabajo_id: trabajoId, alumno_id: currentUser.id, archivo: file.name, comentario, file_url: fileUrl
+    trabajo_id: trabajoId, alumno_id: currentUser.id,
+    archivo: fileNames.join(', '),
+    comentario,
+    file_url: fileUrls.join('|||')
   });
   if (error) { toast('Error: ' + error.message); progress.style.display = 'none'; return; }
-  toast('Trabajo entregado');
+  toast(files.length === 1 ? 'Trabajo entregado' : `${files.length} archivos entregados`);
   renderTrabajos();
 }
 
 function entregaFileLink(entrega) {
   if (entrega.file_url) {
-    return `<a href="${entrega.file_url}" target="_blank" class="mono text-xs">📎 ${escHtml(entrega.archivo)} ↓</a>`;
+    const urls = entrega.file_url.split('|||');
+    const names = entrega.archivo.split(', ');
+    return urls.map((url, i) =>
+      `<a href="${url}" target="_blank" class="mono text-xs" style="display:block;margin-bottom:2px">📎 ${escHtml(names[i] || 'archivo')} ↓</a>`
+    ).join('');
   }
   return `<span class="mono text-xs">📎 ${escHtml(entrega.archivo)}</span>`;
 }

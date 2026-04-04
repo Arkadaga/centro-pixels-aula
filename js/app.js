@@ -70,6 +70,7 @@ function buildNav() {
 
 function navigate(section) {
   currentSection = section;
+  closeSidebar();
   document.querySelectorAll('.nav-item').forEach(el =>
     el.classList.toggle('active', el.dataset.section === section)
   );

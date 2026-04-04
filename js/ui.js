@@ -111,6 +111,16 @@ function closeModal() {
   document.getElementById('modal-overlay').classList.remove('active');
 }
 
+// Sidebar toggle (mobile)
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
 // Page header
 function setPage(title, subtitle) {
   document.getElementById('page-title').textContent = title;

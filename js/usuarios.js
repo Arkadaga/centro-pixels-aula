@@ -120,9 +120,9 @@ async function renderFichasAlumnos() {
       ${ae.length > 0 ? `
         <div class="mb-8">
           <div class="mono text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:1px">Repositorio de entregas</div>
-          <table><thead><tr><th>Trabajo</th><th>Archivo</th><th>Nota</th></tr></thead><tbody>
+          <div class="table-responsive"><table><thead><tr><th>Trabajo</th><th>Archivo</th><th>Nota</th></tr></thead><tbody>
           ${ae.map(e => `<tr><td>${escHtml(tMap[e.trabajo_id] || '—')}</td><td>${entregaFileLink(e, true)}</td><td>${e.nota !== null ? e.nota : '—'}</td></tr>`).join('')}
-          </tbody></table>
+          </tbody></table></div>
         </div>` : ''}
       <div style="border-top:1px solid var(--border-light);padding-top:12px">
         <div class="mono text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:1px">Notas privadas del profesor</div>
@@ -156,7 +156,7 @@ async function renderGestionProfes() {
   if (!profes || profes.length === 0) {
     html += '<div class="empty-state"><p>Sin profesores</p></div>';
   } else {
-    html += `<table>
+    html += `<div class="table-responsive"><table>
       <thead><tr><th></th><th>Nombre</th><th>Email</th><th>Asignaturas</th><th>Bio</th><th></th></tr></thead>
       <tbody>
       ${profes.map(p => `<tr>
@@ -173,7 +173,7 @@ async function renderGestionProfes() {
         </td>
       </tr>`).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
   }
   body.innerHTML = html;
 }
@@ -265,7 +265,7 @@ async function renderGestionAlumnos() {
   if (!alumnos || alumnos.length === 0) {
     html += '<div class="empty-state"><p>Sin alumnos</p></div>';
   } else {
-    html += `<table>
+    html += `<div class="table-responsive"><table>
       <thead><tr><th></th><th>Nombre</th><th>Email</th><th>Usuario</th><th></th></tr></thead>
       <tbody>
       ${alumnos.map(a => `<tr>
@@ -281,7 +281,7 @@ async function renderGestionAlumnos() {
         </td>
       </tr>`).join('')}
       </tbody>
-    </table>`;
+    </table></div>`;
   }
   body.innerHTML = html;
 }

@@ -33,9 +33,14 @@
 
 <!-- APP -->
 <div id="app">
-<aside class="sidebar">
+<button class="menu-toggle" id="menu-toggle" onclick="toggleSidebar()" aria-label="Menú">☰</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <h2>Centro Pixels</h2>
+    <div class="flex-between">
+      <h2>Centro Pixels</h2>
+      <span class="sidebar-close" onclick="closeSidebar()">&times;</span>
+    </div>
     <div class="role-badge" id="sidebar-role"></div>
   </div>
   <nav class="sidebar-nav" id="sidebar-nav"></nav>

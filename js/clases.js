@@ -19,7 +19,7 @@ async function renderClases() {
       <h3>${escHtml(m.title)}</h3>
       <p class="mb-8">${escHtml(m.description)}</p>
       ${mc.length === 0 ? '<p class="text-muted text-sm mono">Sin clases aún</p>' :
-      `<table><thead><tr><th>#</th><th>Clase</th><th>Duración</th><th>Fecha</th><th></th></tr></thead><tbody>
+      `<div class="table-responsive"><table><thead><tr><th>#</th><th>Clase</th><th>Duración</th><th>Fecha</th><th></th></tr></thead><tbody>
       ${mc.map(c => `<tr>
         <td class="mono">${c.orden}</td>
         <td>${escHtml(c.title)}</td>
@@ -27,7 +27,7 @@ async function renderClases() {
         <td class="mono text-sm">${formatDate(c.fecha)}</td>
         <td><button class="btn btn-primary btn-sm" onclick="openPlayer('${c.id}','${c.modulo_id}')">Ver</button></td>
       </tr>`).join('')}
-      </tbody></table>`}
+      </tbody></table></div>`}
     </div>`;
   }).join('');
 }
@@ -105,7 +105,7 @@ async function renderModulos() {
       </div>
       <p class="text-sm text-muted mb-8">${escHtml(m.description)}</p>
       ${mc.length === 0 ? '<p class="mono text-xs text-muted">Sin clases</p>' :
-      `<table><thead><tr><th>#</th><th>Clase</th><th>Duración</th><th>URL</th><th></th></tr></thead><tbody>
+      `<div class="table-responsive"><table><thead><tr><th>#</th><th>Clase</th><th>Duración</th><th>URL</th><th></th></tr></thead><tbody>
       ${mc.map(c => `<tr>
         <td class="mono">${c.orden}</td>
         <td>${escHtml(c.title)}</td>
@@ -113,7 +113,7 @@ async function renderModulos() {
         <td class="mono text-xs" style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${escHtml(c.video_url)}</td>
         <td><button class="btn btn-danger btn-sm" onclick="deleteClase('${c.id}')">×</button></td>
       </tr>`).join('')}
-      </tbody></table>`}
+      </tbody></table></div>`}
     </div>`;
   }).join('');
   body.innerHTML = html;

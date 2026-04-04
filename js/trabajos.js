@@ -338,7 +338,7 @@ async function renderEntregas() {
     return;
   }
 
-  body.innerHTML = `<table>
+  body.innerHTML = `<div class="table-responsive"><table>
     <thead><tr><th>Alumno</th><th>Trabajo</th><th>Archivo</th><th>Fecha</th><th>Nota</th><th></th></tr></thead>
     <tbody>
     ${entregas.map(e => {
@@ -353,7 +353,7 @@ async function renderEntregas() {
       </tr>`;
     }).join('')}
     </tbody>
-  </table>`;
+  </table></div>`;
 }
 
 async function openCalificar(entregaId) {

@@ -184,13 +184,29 @@ async function notifyProfesorEntrega(trabajoId) {
 
 function entregaFileLink(entrega) {
   if (entrega.file_url) {
-    const urls = entrega.file_url.split('|||');
+    const urls = entrega.file_url.split('|||').filter(u => u);
     const names = entrega.archivo.split(', ');
-    return urls.map((url, i) =>
-      `<a href="${url}" target="_blank" class="mono text-xs" style="display:block;margin-bottom:2px">📎 ${escHtml(names[i] || 'archivo')} ↓</a>`
+    let html = urls.map((url, i) =>
+      `<a href="${url}" download="${escHtml(names[i] || 'archivo')}" class="mono text-xs" style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid var(--border-light);margin:2px;text-decoration:none;color:var(--text-dark)">📎 ${escHtml(names[i] || 'archivo')} ↓</a>`
     ).join('');
+    if (urls.length > 1) {
+      html += `<button class="btn btn-secondary btn-sm mt-8" onclick="downloadAll(${JSON.stringify(urls).replace(/"/g, '&quot;')}, ${JSON.stringify(names).replace(/"/g, '&quot;')})">Descargar todos (${urls.length})</button>`;
+    }
+    return html;
   }
   return `<span class="mono text-xs">📎 ${escHtml(entrega.archivo)}</span>`;
+}
+
+function downloadAll(urls, names) {
+  urls.forEach((url, i) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = names[i] || 'archivo';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    setTimeout(() => { a.click(); document.body.removeChild(a); }, i * 300);
+  });
+  toast(`Descargando ${urls.length} archivos...`);
 }
 
 // --- PROFESOR / DIRECCIÓN: manage assignments ---

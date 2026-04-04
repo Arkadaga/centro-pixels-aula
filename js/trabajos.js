@@ -42,11 +42,27 @@ async function renderTrabajos() {
               <p class="text-sm">${escHtml(entrega.feedback || '')}</p>
             </div>
           </div>
-          <div class="entrega-file">${entregaFileLink(entrega)}</div>
+          <div class="entrega-file mb-8">${entregaFileLink(entrega)}</div>
+          <details><summary class="btn btn-secondary btn-sm">Modificar entrega</summary>
+            <div class="mt-8">
+              <div class="form-group"><label>Nuevos archivos</label><input type="file" id="entrega-file-${t.id}" multiple style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
+              <div class="form-group"><label>Comentario</label><textarea id="entrega-comment-${t.id}" placeholder="Comentario actualizado...">${escHtml(entrega.comentario || '')}</textarea></div>
+              <button class="btn btn-primary" onclick="resubmitEntrega('${t.id}','${entrega.id}')">Reenviar</button>
+              <div id="entrega-progress-${t.id}" class="mono text-xs text-muted mt-8" style="display:none"></div>
+            </div>
+          </details>
         </div>` :
       estado === 'entregado' ? `
         <div style="border-top:1px solid var(--border-light);padding-top:12px;margin-top:8px">
-          <div class="entrega-file">${entregaFileLink(entrega)}<span class="text-sm text-muted"> — pendiente de calificación</span></div>
+          <div class="entrega-file mb-8">${entregaFileLink(entrega)}<span class="text-sm text-muted"> — pendiente de calificación</span></div>
+          <details><summary class="btn btn-secondary btn-sm">Modificar entrega</summary>
+            <div class="mt-8">
+              <div class="form-group"><label>Nuevos archivos</label><input type="file" id="entrega-file-${t.id}" multiple style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
+              <div class="form-group"><label>Comentario</label><textarea id="entrega-comment-${t.id}" placeholder="Comentario actualizado...">${escHtml(entrega.comentario || '')}</textarea></div>
+              <button class="btn btn-primary" onclick="resubmitEntrega('${t.id}','${entrega.id}')">Reenviar</button>
+              <div id="entrega-progress-${t.id}" class="mono text-xs text-muted mt-8" style="display:none"></div>
+            </div>
+          </details>
         </div>` :
       `<div style="border-top:1px solid var(--border-light);padding-top:12px;margin-top:8px">
         <div class="form-group"><label>Archivos</label><input type="file" id="entrega-file-${t.id}" multiple style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
@@ -91,7 +107,79 @@ async function submitEntrega(trabajoId) {
   });
   if (error) { toast('Error: ' + error.message); progress.style.display = 'none'; return; }
   toast(files.length === 1 ? 'Trabajo entregado' : `${files.length} archivos entregados`);
+  await notifyProfesorEntrega(trabajoId);
   renderTrabajos();
+}
+
+async function resubmitEntrega(trabajoId, entregaId) {
+  const fileInput = document.getElementById('entrega-file-' + trabajoId);
+  const comentario = document.getElementById('entrega-comment-' + trabajoId).value.trim();
+  const progress = document.getElementById('entrega-progress-' + trabajoId);
+
+  if (!fileInput.files || fileInput.files.length === 0) {
+    // Solo actualizar comentario si no hay archivos nuevos
+    const { error } = await sb.from('entregas').update({ comentario }).eq('id', entregaId);
+    if (error) { toast('Error: ' + error.message); return; }
+    toast('Comentario actualizado');
+    renderTrabajos();
+    return;
+  }
+
+  const files = Array.from(fileInput.files);
+  progress.style.display = 'block';
+
+  const fileNames = [];
+  const fileUrls = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    progress.textContent = `Subiendo archivo ${i + 1} de ${files.length}...`;
+    const path = `${currentUser.id}/${trabajoId}/${Date.now()}_${file.name}`;
+    const { error: uploadError } = await sb.storage.from('entregas').upload(path, file);
+    if (uploadError) { toast('Error subiendo ' + file.name + ': ' + uploadError.message); progress.style.display = 'none'; return; }
+    const { data: urlData } = sb.storage.from('entregas').getPublicUrl(path);
+    fileNames.push(file.name);
+    fileUrls.push(urlData.publicUrl);
+  }
+
+  const { error } = await sb.from('entregas').update({
+    archivo: fileNames.join(', '),
+    comentario,
+    file_url: fileUrls.join('|||'),
+    nota: null,
+    feedback: ''
+  }).eq('id', entregaId);
+  if (error) { toast('Error: ' + error.message); progress.style.display = 'none'; return; }
+  toast('Entrega actualizada');
+  await notifyProfesorEntrega(trabajoId);
+  renderTrabajos();
+}
+
+async function notifyProfesorEntrega(trabajoId) {
+  // Get the trabajo to find the profesor
+  const { data: trabajo } = await sb.from('trabajos').select('title, profesor_id').eq('id', trabajoId).single();
+  if (!trabajo || !trabajo.profesor_id) return;
+
+  // Get profesor's notification email
+  const { data: profe } = await sb.from('profiles').select('name, email, notification_email').eq('id', trabajo.profesor_id).single();
+  if (!profe) return;
+
+  const toEmail = profe.notification_email || profe.email;
+  if (!toEmail) return;
+
+  // Send email via Supabase Edge Function
+  try {
+    await sb.functions.invoke('send-notification', {
+      body: {
+        to: toEmail,
+        subject: `Nueva entrega: ${trabajo.title}`,
+        body: `${currentUser.name} ha entregado/actualizado el trabajo "${trabajo.title}".\n\nAccede al aula virtual para revisarlo.`
+      }
+    });
+  } catch (e) {
+    // Silent fail — notification is not critical
+    console.log('Notificación no enviada:', e.message);
+  }
 }
 
 function entregaFileLink(entrega) {

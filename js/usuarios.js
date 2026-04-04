@@ -39,6 +39,9 @@ function renderCuenta() {
       </div>
       <div class="form-group"><label>Nombre</label><input type="text" id="acc-name" value="${escHtml(currentUser.name)}"></div>
       <div class="form-group"><label>Email</label><input type="text" id="acc-email" value="${escHtml(currentUser.email)}" disabled></div>
+      ${currentUser.role === 'profesor' || currentUser.role === 'direccion' ? `
+        <div class="form-group"><label>Email de notificaciones</label><input type="text" id="acc-notif-email" value="${escHtml(currentUser.notification_email || '')}" placeholder="Donde recibirás avisos de entregas"></div>
+      ` : ''}
       <div class="form-group"><label>Nueva contraseña</label><input type="password" id="acc-pass" placeholder="Dejar vacío para no cambiar"></div>
       <button class="btn btn-primary" onclick="saveCuenta()">Guardar cambios</button>
     </div>
@@ -55,6 +58,8 @@ async function saveCuenta() {
 
   const updates = { name };
   if (photoUrl) updates.photo_url = photoUrl;
+  const notifInput = document.getElementById('acc-notif-email');
+  if (notifInput) updates.notification_email = notifInput.value.trim();
 
   const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
   if (error) { toast('Error: ' + error.message); return; }

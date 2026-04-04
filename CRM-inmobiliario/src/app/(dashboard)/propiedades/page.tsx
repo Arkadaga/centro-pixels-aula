@@ -14,9 +14,8 @@ import {
   ESTADO_PROPIEDAD,
   TIPO_OPERACION,
   TIPO_PROPIEDAD,
-  type EstadoPropiedad,
 } from '@/lib/utils'
-import type { Propiedad, TipoPropiedad, TipoOperacion } from '@/types/database'
+import type { Propiedad, TipoPropiedad, TipoOperacion, EstadoPropiedad } from '@/types/database'
 import {
   Building2,
   Plus,

@@ -42,7 +42,7 @@ async function renderTrabajos() {
               <p class="text-sm">${escHtml(entrega.feedback || '')}</p>
             </div>
           </div>
-          <div class="entrega-file mb-8">${entregaFileLink(entrega)}</div>
+          <div class="entrega-file mb-8">${entregaFileLink(entrega, true)}</div>
           <details><summary class="btn btn-secondary btn-sm">Modificar entrega</summary>
             <div class="mt-8">
               <div class="form-group"><label>Nuevos archivos</label><input type="file" id="entrega-file-${t.id}" multiple style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
@@ -54,7 +54,7 @@ async function renderTrabajos() {
         </div>` :
       estado === 'entregado' ? `
         <div style="border-top:1px solid var(--border-light);padding-top:12px;margin-top:8px">
-          <div class="entrega-file mb-8">${entregaFileLink(entrega)}<span class="text-sm text-muted"> — pendiente de calificación</span></div>
+          <div class="entrega-file mb-8">${entregaFileLink(entrega, true)}<span class="text-sm text-muted"> — pendiente de calificación</span></div>
           <details><summary class="btn btn-secondary btn-sm">Modificar entrega</summary>
             <div class="mt-8">
               <div class="form-group"><label>Nuevos archivos</label><input type="file" id="entrega-file-${t.id}" multiple style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
@@ -182,19 +182,60 @@ async function notifyProfesorEntrega(trabajoId) {
   }
 }
 
-function entregaFileLink(entrega) {
+function entregaFileLink(entrega, canDelete) {
   if (entrega.file_url) {
     const urls = entrega.file_url.split('|||').filter(u => u);
     const names = entrega.archivo.split(', ');
-    let html = urls.map((url, i) =>
-      `<a href="${url}" download="${escHtml(names[i] || 'archivo')}" class="mono text-xs" style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:1px solid var(--border-light);margin:2px;text-decoration:none;color:var(--text-dark)">📎 ${escHtml(names[i] || 'archivo')} ↓</a>`
+    let html = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    html += urls.map((url, i) =>
+      `<span style="display:inline-flex;align-items:center;border:1px solid var(--border-light);padding:4px 8px;gap:6px">` +
+      `<a href="${url}" download="${escHtml(names[i] || 'archivo')}" class="mono text-xs" style="text-decoration:none;color:var(--text-dark)">📎 ${escHtml(names[i] || 'archivo')} ↓</a>` +
+      (canDelete ? `<span style="cursor:pointer;color:var(--danger);font-weight:700;font-size:14px" onclick="deleteEntregaFile('${entrega.id}',${i})" title="Eliminar archivo">×</span>` : '') +
+      `</span>`
     ).join('');
+    html += '</div>';
     if (urls.length > 1) {
       html += `<button class="btn btn-secondary btn-sm mt-8" onclick="downloadAll(${JSON.stringify(urls).replace(/"/g, '&quot;')}, ${JSON.stringify(names).replace(/"/g, '&quot;')})">Descargar todos (${urls.length})</button>`;
     }
     return html;
   }
   return `<span class="mono text-xs">📎 ${escHtml(entrega.archivo)}</span>`;
+}
+
+async function deleteEntregaFile(entregaId, fileIndex) {
+  const { data: entrega } = await sb.from('entregas').select('*').eq('id', entregaId).single();
+  if (!entrega) return;
+
+  const urls = entrega.file_url.split('|||').filter(u => u);
+  const names = entrega.archivo.split(', ');
+
+  // Remove file from Storage
+  try {
+    const url = urls[fileIndex];
+    const path = url.split('/storage/v1/object/public/entregas/')[1];
+    if (path) await sb.storage.from('entregas').remove([decodeURIComponent(path)]);
+  } catch (e) { console.log('Error borrando de storage:', e); }
+
+  // Remove from arrays
+  urls.splice(fileIndex, 1);
+  names.splice(fileIndex, 1);
+
+  if (urls.length === 0) {
+    // No files left — delete the whole entrega
+    await sb.from('entregas').delete().eq('id', entregaId);
+    toast('Entrega eliminada');
+  } else {
+    await sb.from('entregas').update({
+      archivo: names.join(', '),
+      file_url: urls.join('|||')
+    }).eq('id', entregaId);
+    toast('Archivo eliminado');
+  }
+
+  // Refresh current view
+  if (currentSection === 'trabajos') renderTrabajos();
+  else if (currentSection === 'entregas') renderEntregas();
+  else if (currentSection === 'fichas-alumnos') renderFichasAlumnos();
 }
 
 function downloadAll(urls, names) {
@@ -305,7 +346,7 @@ async function renderEntregas() {
       return `<tr>
         <td>${escHtml(nameMap[e.alumno_id] || 'Desconocido')}</td>
         <td>${escHtml(tMap[e.trabajo_id] || '—')}</td>
-        <td>${entregaFileLink(e)}</td>
+        <td>${entregaFileLink(e, true)}</td>
         <td class="mono text-sm">${formatDate(e.fecha)}</td>
         <td>${hasNota ? `<span class="nota-display ${e.nota >= 5 ? 'aprobado' : 'suspendido'}" style="font-size:16px">${e.nota}</span>` : '<span class="badge badge-warning">Pendiente</span>'}</td>
         <td><button class="btn btn-secondary btn-sm" onclick="openCalificar('${e.id}')">${hasNota ? 'Editar' : 'Calificar'}</button></td>
@@ -321,7 +362,7 @@ async function openCalificar(entregaId) {
   const alumnoName = await getProfileName(e.alumno_id);
   openModal('Calificar Entrega', `
     <div class="form-group"><label>Alumno</label><p>${escHtml(alumnoName)}</p></div>
-    <div class="form-group"><label>Archivo</label><p>${entregaFileLink(e)}</p></div>
+    <div class="form-group"><label>Archivo</label><p>${entregaFileLink(e, true)}</p></div>
     <div class="form-group"><label>Comentario del alumno</label><p class="text-sm">${escHtml(e.comentario || '—')}</p></div>
     <div class="form-group"><label>Nota (0-10)</label><input type="number" id="cal-nota" min="0" max="10" step="0.1" value="${e.nota !== null ? e.nota : ''}"></div>
     <div class="form-group"><label>Feedback</label><textarea id="cal-feedback">${escHtml(e.feedback || '')}</textarea></div>

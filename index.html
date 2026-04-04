@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centro Pixels — Aula Virtual</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+<div class="login-box">
+  <h1>Centro Pixels</h1>
+  <div class="sub">Aula Virtual — Escuela de Arte Digital, Bilbao</div>
+  <form id="login-form">
+    <label>Email</label>
+    <input type="email" id="login-email" autocomplete="off" placeholder="tu@email.com">
+    <label>Contraseña</label>
+    <input type="password" id="login-pass" placeholder="••••••••">
+    <button type="submit">Acceder</button>
+  </form>
+  <div class="login-error" id="login-error">Credenciales incorrectas</div>
+  <div class="login-roles">
+    <p>Acceso rápido</p>
+    <button class="role-btn" onclick="quickLogin('admin@centropixels.com','admin123')">Dirección</button>
+    <button class="role-btn" onclick="quickLogin('marta@centropixels.com','profe123')">Profesora</button>
+    <button class="role-btn" onclick="quickLogin('alumno1@centropixels.com','alumno123')">Alumno</button>
+  </div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app">
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Centro Pixels</h2>
+    <div class="role-badge" id="sidebar-role"></div>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+  <div class="sidebar-footer">
+    <div class="flex gap-8" style="align-items:center;margin-bottom:8px">
+      <div class="avatar avatar-sidebar" id="footer-avatar"></div>
+      <div>
+        <div class="user-info" id="footer-user"></div>
+        <div class="user-role" id="footer-role"></div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </div>
+</aside>
+<main class="main-content">
+  <div class="page-header">
+    <h1 id="page-title">Dashboard</h1>
+    <p id="page-subtitle"></p>
+  </div>
+  <div class="page-body" id="page-body"></div>
+</main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+<div class="modal" id="modal">
+  <div class="modal-header">
+    <h3 id="modal-title"></h3>
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+  </div>
+  <div class="modal-body" id="modal-body"></div>
+  <div class="modal-footer" id="modal-footer"></div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading-overlay">Cargando...</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/supabase-client.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/clases.js"></script>
+<script src="js/recursos.js"></script>
+<script src="js/trabajos.js"></script>
+<script src="js/calendario.js"></script>
+<script src="js/incidencias.js"></script>
+<script src="js/usuarios.js"></script>
+</body>
+</html>

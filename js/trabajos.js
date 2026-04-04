@@ -42,31 +42,56 @@ async function renderTrabajos() {
               <p class="text-sm">${escHtml(entrega.feedback || '')}</p>
             </div>
           </div>
-          <div class="entrega-file"><span class="mono text-xs">📎 ${escHtml(entrega.archivo)}</span></div>
+          <div class="entrega-file">${entregaFileLink(entrega)}</div>
         </div>` :
       estado === 'entregado' ? `
         <div style="border-top:1px solid var(--border-light);padding-top:12px;margin-top:8px">
-          <div class="entrega-file"><span class="mono text-xs">📎 ${escHtml(entrega.archivo)}</span><span class="text-sm text-muted"> — pendiente de calificación</span></div>
+          <div class="entrega-file">${entregaFileLink(entrega)}<span class="text-sm text-muted"> — pendiente de calificación</span></div>
         </div>` :
       `<div style="border-top:1px solid var(--border-light);padding-top:12px;margin-top:8px">
-        <div class="form-group"><label>Nombre del archivo</label><input type="text" id="entrega-file-${t.id}" placeholder="mi_trabajo.pdf"></div>
+        <div class="form-group"><label>Archivo</label><input type="file" id="entrega-file-${t.id}" style="padding:8px;border:1px solid var(--border-light);width:100%"></div>
         <div class="form-group"><label>Comentario</label><textarea id="entrega-comment-${t.id}" placeholder="Comentario sobre la entrega..."></textarea></div>
         <button class="btn btn-primary" onclick="submitEntrega('${t.id}')">Entregar trabajo</button>
+        <div id="entrega-progress-${t.id}" class="mono text-xs text-muted mt-8" style="display:none">Subiendo archivo...</div>
       </div>`}
     </div>`;
   }).join('');
 }
 
 async function submitEntrega(trabajoId) {
-  const archivo = document.getElementById('entrega-file-' + trabajoId).value.trim();
+  const fileInput = document.getElementById('entrega-file-' + trabajoId);
   const comentario = document.getElementById('entrega-comment-' + trabajoId).value.trim();
-  if (!archivo) { toast('Indica el nombre del archivo'); return; }
+  if (!fileInput.files || !fileInput.files[0]) { toast('Selecciona un archivo'); return; }
+
+  const file = fileInput.files[0];
+  const progress = document.getElementById('entrega-progress-' + trabajoId);
+  progress.style.display = 'block';
+  progress.textContent = 'Subiendo archivo...';
+
+  // Upload to Supabase Storage
+  const ext = file.name.split('.').pop();
+  const path = `${currentUser.id}/${trabajoId}/${Date.now()}_${file.name}`;
+  const { error: uploadError } = await sb.storage.from('entregas').upload(path, file);
+  if (uploadError) { toast('Error subiendo: ' + uploadError.message); progress.style.display = 'none'; return; }
+
+  // Get public URL
+  const { data: urlData } = sb.storage.from('entregas').getPublicUrl(path);
+  const fileUrl = urlData.publicUrl;
+
+  // Save to DB
   const { error } = await sb.from('entregas').insert({
-    trabajo_id: trabajoId, alumno_id: currentUser.id, archivo, comentario
+    trabajo_id: trabajoId, alumno_id: currentUser.id, archivo: file.name, comentario, file_url: fileUrl
   });
-  if (error) { toast('Error: ' + error.message); return; }
+  if (error) { toast('Error: ' + error.message); progress.style.display = 'none'; return; }
   toast('Trabajo entregado');
   renderTrabajos();
+}
+
+function entregaFileLink(entrega) {
+  if (entrega.file_url) {
+    return `<a href="${entrega.file_url}" target="_blank" class="mono text-xs">📎 ${escHtml(entrega.archivo)} ↓</a>`;
+  }
+  return `<span class="mono text-xs">📎 ${escHtml(entrega.archivo)}</span>`;
 }
 
 // --- PROFESOR / DIRECCIÓN: manage assignments ---
@@ -165,7 +190,7 @@ async function renderEntregas() {
       return `<tr>
         <td>${escHtml(nameMap[e.alumno_id] || 'Desconocido')}</td>
         <td>${escHtml(tMap[e.trabajo_id] || '—')}</td>
-        <td class="mono text-sm">${escHtml(e.archivo)}</td>
+        <td>${entregaFileLink(e)}</td>
         <td class="mono text-sm">${formatDate(e.fecha)}</td>
         <td>${hasNota ? `<span class="nota-display ${e.nota >= 5 ? 'aprobado' : 'suspendido'}" style="font-size:16px">${e.nota}</span>` : '<span class="badge badge-warning">Pendiente</span>'}</td>
         <td><button class="btn btn-secondary btn-sm" onclick="openCalificar('${e.id}')">${hasNota ? 'Editar' : 'Calificar'}</button></td>
@@ -181,7 +206,7 @@ async function openCalificar(entregaId) {
   const alumnoName = await getProfileName(e.alumno_id);
   openModal('Calificar Entrega', `
     <div class="form-group"><label>Alumno</label><p>${escHtml(alumnoName)}</p></div>
-    <div class="form-group"><label>Archivo</label><p class="mono text-sm">${escHtml(e.archivo)}</p></div>
+    <div class="form-group"><label>Archivo</label><p>${entregaFileLink(e)}</p></div>
     <div class="form-group"><label>Comentario del alumno</label><p class="text-sm">${escHtml(e.comentario || '—')}</p></div>
     <div class="form-group"><label>Nota (0-10)</label><input type="number" id="cal-nota" min="0" max="10" step="0.1" value="${e.nota !== null ? e.nota : ''}"></div>
     <div class="form-group"><label>Feedback</label><textarea id="cal-feedback">${escHtml(e.feedback || '')}</textarea></div>

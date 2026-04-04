@@ -116,7 +116,7 @@ async function renderFichasAlumnos() {
         <div class="mb-8">
           <div class="mono text-xs text-muted mb-8" style="text-transform:uppercase;letter-spacing:1px">Repositorio de entregas</div>
           <table><thead><tr><th>Trabajo</th><th>Archivo</th><th>Nota</th></tr></thead><tbody>
-          ${ae.map(e => `<tr><td>${escHtml(tMap[e.trabajo_id] || '—')}</td><td class="mono text-sm">${escHtml(e.archivo)}</td><td>${e.nota !== null ? e.nota : '—'}</td></tr>`).join('')}
+          ${ae.map(e => `<tr><td>${escHtml(tMap[e.trabajo_id] || '—')}</td><td>${entregaFileLink(e)}</td><td>${e.nota !== null ? e.nota : '—'}</td></tr>`).join('')}
           </tbody></table>
         </div>` : ''}
       <div style="border-top:1px solid var(--border-light);padding-top:12px">

@@ -24,6 +24,7 @@ const NAV = {
     { section: 'calendario', label: 'Calendario', icon: '▦' },
     { section: 'incidencias-prof', label: 'Incidencias', icon: '!' },
     { section: 'fichas-alumnos', label: 'Fichas Alumnos', icon: '◉' },
+    { section: 'gestion-alumnos', label: 'Alumnos', icon: '+' },
     { section: 'cuenta', label: 'Mi Cuenta', icon: '⚙' }
   ],
   direccion: [

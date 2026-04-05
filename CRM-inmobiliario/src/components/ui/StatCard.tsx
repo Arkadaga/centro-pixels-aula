@@ -13,10 +13,10 @@ interface StatCardProps {
 export default function StatCard({ title, value, icon: Icon, change, changeType = 'neutral', color = 'bg-brand-50 text-brand-600' }: StatCardProps) {
   return (
     <div className="stat-card">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-xs sm:text-sm font-medium text-gray-500 truncate">{title}</p>
+          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{value}</p>
           {change && (
             <p className={cn(
               'text-xs font-medium mt-2',
@@ -28,8 +28,8 @@ export default function StatCard({ title, value, icon: Icon, change, changeType 
             </p>
           )}
         </div>
-        <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center', color)}>
-          <Icon className="w-5.5 h-5.5" />
+        <div className={cn('w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0', color)}>
+          <Icon className="w-5 h-5" />
         </div>
       </div>
     </div>

@@ -187,42 +187,46 @@ export default function PropiedadesPage() {
       </div>
 
       {/* Filtros */}
-      <div className="card p-4">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex-1">
-            <SearchInput value={search} onChange={setSearch} placeholder="Buscar por título, referencia, ciudad..." />
+      <div className="card p-3 sm:p-4">
+        <div className="space-y-3">
+          <div className="flex gap-2 sm:gap-3">
+            <div className="flex-1">
+              <SearchInput value={search} onChange={setSearch} placeholder="Buscar por título, referencia, ciudad..." />
+            </div>
+            <div className="hidden sm:flex gap-1 border border-gray-300 rounded-lg p-0.5 flex-shrink-0">
+              <button
+                onClick={() => setVista('grid')}
+                className={`p-2 rounded-md transition-colors ${vista === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setVista('list')}
+                className={`p-2 rounded-md transition-colors ${vista === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-          <select className="select w-full sm:w-40" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
-            <option value="">Todos los estados</option>
-            {Object.entries(ESTADO_PROPIEDAD).map(([key, val]) => (
-              <option key={key} value={key}>{val.label}</option>
-            ))}
-          </select>
-          <select className="select w-full sm:w-40" value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)}>
-            <option value="">Todos los tipos</option>
-            {Object.entries(TIPO_PROPIEDAD).map(([key, val]) => (
-              <option key={key} value={key}>{val}</option>
-            ))}
-          </select>
-          <select className="select w-full sm:w-40" value={filtroOperacion} onChange={(e) => setFiltroOperacion(e.target.value)}>
-            <option value="">Todas las operaciones</option>
-            {Object.entries(TIPO_OPERACION).map(([key, val]) => (
-              <option key={key} value={key}>{val}</option>
-            ))}
-          </select>
-          <div className="flex gap-1 border border-gray-300 rounded-lg p-0.5">
-            <button
-              onClick={() => setVista('grid')}
-              className={`p-2 rounded-md transition-colors ${vista === 'grid' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-            >
-              <Grid3X3 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setVista('list')}
-              className={`p-2 rounded-md transition-colors ${vista === 'list' ? 'bg-gray-100 text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
-            >
-              <List className="w-4 h-4" />
-            </button>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0">
+            <select className="select flex-shrink-0 w-[140px] sm:w-40 text-xs sm:text-sm" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
+              <option value="">Todos los estados</option>
+              {Object.entries(ESTADO_PROPIEDAD).map(([key, val]) => (
+                <option key={key} value={key}>{val.label}</option>
+              ))}
+            </select>
+            <select className="select flex-shrink-0 w-[140px] sm:w-40 text-xs sm:text-sm" value={filtroTipo} onChange={(e) => setFiltroTipo(e.target.value)}>
+              <option value="">Todos los tipos</option>
+              {Object.entries(TIPO_PROPIEDAD).map(([key, val]) => (
+                <option key={key} value={key}>{val}</option>
+              ))}
+            </select>
+            <select className="select flex-shrink-0 w-[155px] sm:w-44 text-xs sm:text-sm" value={filtroOperacion} onChange={(e) => setFiltroOperacion(e.target.value)}>
+              <option value="">Operaciones</option>
+              {Object.entries(TIPO_OPERACION).map(([key, val]) => (
+                <option key={key} value={key}>{val}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -236,12 +240,12 @@ export default function PropiedadesPage() {
           action={<button onClick={() => setShowNewModal(true)} className="btn-primary"><Plus className="w-4 h-4" /> Nueva propiedad</button>}
         />
       ) : vista === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
           {filtered.map((prop) => (
             <Link key={prop.id} href={`/propiedades/${prop.id}`} className="card-hover overflow-hidden group">
               {/* Imagen placeholder */}
-              <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
-                <Building2 className="w-12 h-12 text-gray-300" />
+              <div className="h-36 sm:h-44 md:h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative">
+                <Building2 className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300" />
                 <div className="absolute top-3 left-3 flex gap-2">
                   <Badge className={ESTADO_PROPIEDAD[prop.estado]?.color}>
                     {ESTADO_PROPIEDAD[prop.estado]?.label}

@@ -94,7 +94,7 @@ export default function PortalesPage() {
               {statsIdealist.some(p => p.estado === 'error') ? 'Con errores' : 'Operativo'}
             </Badge>
           </div>
-          <div className="grid grid-cols-4 gap-3 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-center">
             <div>
               <p className="text-xl font-bold text-emerald-600">{statsIdealist.filter(p => p.estado === 'publicado').length}</p>
               <p className="text-xs text-gray-500">Publicados</p>
@@ -130,7 +130,7 @@ export default function PortalesPage() {
               {statsFotocasa.some(p => p.estado === 'error') ? 'Con errores' : 'Operativo'}
             </Badge>
           </div>
-          <div className="grid grid-cols-4 gap-3 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-center">
             <div>
               <p className="text-xl font-bold text-emerald-600">{statsFotocasa.filter(p => p.estado === 'publicado').length}</p>
               <p className="text-xs text-gray-500">Publicados</p>

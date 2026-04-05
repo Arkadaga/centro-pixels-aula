@@ -103,16 +103,17 @@ export default function CaptacionPage() {
       </div>
 
       {/* Pipeline Kanban */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        {(Object.entries(ESTADO_CAPTACION) as [EstadoCaptacion, { label: string; color: string }][]).map(([estado, config]) => {
-          const items = captaciones.filter(c => c.estado === estado)
-          return (
-            <div key={estado} className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Badge className={config.color}>{config.label}</Badge>
-                <span className="text-xs text-gray-400">{items.length}</span>
-              </div>
-              <div className="space-y-2 min-h-[100px]">
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-4 sm:pb-0">
+        <div className="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 min-w-[900px] sm:min-w-0">
+          {(Object.entries(ESTADO_CAPTACION) as [EstadoCaptacion, { label: string; color: string }][]).map(([estado, config]) => {
+            const items = captaciones.filter(c => c.estado === estado)
+            return (
+              <div key={estado} className="space-y-3 min-w-[200px] sm:min-w-0">
+                <div className="flex items-center justify-between">
+                  <Badge className={config.color}>{config.label}</Badge>
+                  <span className="text-xs text-gray-400">{items.length}</span>
+                </div>
+                <div className="space-y-2 min-h-[80px]">
                 {items.map((cap) => (
                   <div key={cap.id} className="card-hover p-4 cursor-pointer">
                     <p className="font-medium text-sm text-gray-900">{cap.propietario_nombre}</p>
@@ -162,6 +163,7 @@ export default function CaptacionPage() {
             </div>
           )
         })}
+        </div>
       </div>
 
       {/* Modal Nueva Captación */}

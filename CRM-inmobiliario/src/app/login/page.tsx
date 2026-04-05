@@ -77,7 +77,7 @@ export default function LoginPage() {
       </div>
 
       {/* Panel derecho - Login */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-5 sm:p-8">
         <div className="w-full max-w-md">
           <div className="lg:hidden flex items-center gap-3 mb-10">
             <div className="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center">

@@ -113,7 +113,7 @@ export default function ConfiguracionPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-6 border-b border-gray-200">
+      <div className="tabs-container">
         {[
           { id: 'perfil', label: 'Mi perfil', icon: User },
           { id: 'oficina', label: 'Oficina', icon: Building2 },
@@ -122,7 +122,7 @@ export default function ConfiguracionPage() {
           <button
             key={t.id}
             onClick={() => setTab(t.id as any)}
-            className={`flex items-center gap-2 px-1 py-3 text-sm border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-3 sm:px-1 py-3 text-sm border-b-2 transition-colors flex-shrink-0 ${
               tab === t.id ? 'tab-active' : 'tab-inactive border-transparent'
             }`}
           >
@@ -134,7 +134,7 @@ export default function ConfiguracionPage() {
 
       {/* Mi perfil */}
       {tab === 'perfil' && (
-        <form onSubmit={guardarPerfil} className="card p-6 max-w-2xl space-y-5">
+        <form onSubmit={guardarPerfil} className="card p-4 sm:p-6 max-w-2xl space-y-5">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-brand-400 to-brand-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-2xl">

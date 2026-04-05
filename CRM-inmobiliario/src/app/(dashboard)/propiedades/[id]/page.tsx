@@ -155,28 +155,29 @@ export default function PropiedadDetallePage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0 mt-0.5">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="text-sm font-mono text-gray-400">{propiedad.referencia}</span>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="text-xs sm:text-sm font-mono text-gray-400">{propiedad.referencia}</span>
               <Badge className={ESTADO_PROPIEDAD[propiedad.estado]?.color}>
                 {ESTADO_PROPIEDAD[propiedad.estado]?.label}
               </Badge>
               {propiedad.destacada && <Badge className="bg-amber-100 text-amber-800">Destacada</Badge>}
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">{propiedad.titulo}</h1>
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900">{propiedad.titulo}</h1>
             {propiedad.ciudad && (
-              <p className="text-gray-500 flex items-center gap-1 mt-1">
-                <MapPin className="w-4 h-4" /> {propiedad.direccion ? `${propiedad.direccion}, ` : ''}{propiedad.ciudad}, {propiedad.provincia}
+              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                <MapPin className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{propiedad.direccion ? `${propiedad.direccion}, ` : ''}{propiedad.ciudad}, {propiedad.provincia}</span>
               </p>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-11 sm:ml-0 flex-shrink-0">
           <button onClick={() => setShowEstadoModal(true)} className="btn-secondary btn-sm">
             Cambiar estado
           </button>
@@ -187,7 +188,7 @@ export default function PropiedadDetallePage() {
       </div>
 
       {/* Precio + Info rápida */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <div className="card p-5">
           <p className="text-sm text-gray-500">Precio</p>
           <p className="text-3xl font-bold text-brand-600">{formatPrecio(propiedad.precio)}</p>
@@ -229,7 +230,7 @@ export default function PropiedadDetallePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-6 border-b border-gray-200 pb-0">
+      <div className="tabs-container">
         {[
           { id: 'detalle', label: 'Detalle', icon: Building2 },
           { id: 'leads', label: `Leads (${leads.length})`, icon: Users },
@@ -239,7 +240,7 @@ export default function PropiedadDetallePage() {
           <button
             key={t.id}
             onClick={() => setTab(t.id as any)}
-            className={`flex items-center gap-2 px-1 py-3 text-sm border-b-2 transition-colors ${
+            className={`flex items-center gap-2 px-3 sm:px-1 py-3 text-sm border-b-2 transition-colors flex-shrink-0 ${
               tab === t.id ? 'tab-active' : 'tab-inactive border-transparent'
             }`}
           >

@@ -109,9 +109,9 @@ export default function AgentesPage() {
                 </div>
               </div>
 
-              <div className="mt-4 space-y-2 text-sm">
-                <p className="flex items-center gap-2 text-gray-600">
-                  <Mail className="w-4 h-4 text-gray-400" /> {agente.email}
+              <div className="mt-4 space-y-2 text-sm min-w-0">
+                <p className="flex items-center gap-2 text-gray-600 min-w-0">
+                  <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" /> <span className="truncate">{agente.email}</span>
                 </p>
                 {agente.telefono && (
                   <p className="flex items-center gap-2 text-gray-600">

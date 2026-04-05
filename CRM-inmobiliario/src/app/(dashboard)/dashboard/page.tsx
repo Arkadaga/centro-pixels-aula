@@ -87,17 +87,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 sm:space-y-8 animate-fade-in">
       {/* Header */}
       <div>
         <h1 className="page-title">
           Hola, {user?.nombre} 👋
         </h1>
-        <p className="text-gray-500 mt-1">Aquí tienes el resumen de tu actividad</p>
+        <p className="text-sm text-gray-500 mt-1">Aquí tienes el resumen de tu actividad</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard
           title="Propiedades disponibles"
           value={stats?.propiedades_disponibles ?? 0}
@@ -125,33 +125,33 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats secundarias */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="card p-4 text-center">
-          <p className="text-2xl font-bold text-gray-900">{stats?.propiedades_reservadas ?? 0}</p>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="card p-3 sm:p-4 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats?.propiedades_reservadas ?? 0}</p>
           <p className="text-xs text-gray-500 mt-1">Reservadas</p>
         </div>
-        <div className="card p-4 text-center">
-          <p className="text-2xl font-bold text-emerald-600">{stats?.propiedades_vendidas ?? 0}</p>
+        <div className="card p-3 sm:p-4 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-emerald-600">{stats?.propiedades_vendidas ?? 0}</p>
           <p className="text-xs text-gray-500 mt-1">Vendidas</p>
         </div>
-        <div className="card p-4 text-center">
-          <p className="text-2xl font-bold text-gray-900">{stats?.leads_activos ?? 0}</p>
+        <div className="card p-3 sm:p-4 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-gray-900">{stats?.leads_activos ?? 0}</p>
           <p className="text-xs text-gray-500 mt-1">Leads activos</p>
         </div>
-        <div className="card p-4 text-center">
-          <p className="text-2xl font-bold text-brand-600">{stats?.visitas_pendientes ?? 0}</p>
+        <div className="card p-3 sm:p-4 text-center">
+          <p className="text-xl sm:text-2xl font-bold text-brand-600">{stats?.visitas_pendientes ?? 0}</p>
           <p className="text-xs text-gray-500 mt-1">Visitas pendientes</p>
         </div>
       </div>
 
       {/* Grid principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Propiedades recientes */}
         <div className="lg:col-span-2">
           <div className="card">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="font-semibold text-gray-900">Propiedades recientes</h2>
-              <Link href="/propiedades" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
+            <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-b border-gray-100">
+              <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Propiedades recientes</h2>
+              <Link href="/propiedades" className="text-xs sm:text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1 p-1 -m-1">
                 Ver todas <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -163,22 +163,22 @@ export default function DashboardPage() {
                   <Link
                     key={prop.id}
                     href={`/propiedades/${prop.id}`}
-                    className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between px-4 sm:px-5 py-3 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Building2 className="w-5 h-5 text-gray-400" />
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">{prop.titulo}</p>
                         <p className="text-xs text-gray-500">{prop.referencia} · {prop.ciudad}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-                      <Badge className={ESTADO_PROPIEDAD[prop.estado as keyof typeof ESTADO_PROPIEDAD]?.color}>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 ml-2">
+                      <Badge className={`hidden sm:inline-flex ${ESTADO_PROPIEDAD[prop.estado as keyof typeof ESTADO_PROPIEDAD]?.color}`}>
                         {ESTADO_PROPIEDAD[prop.estado as keyof typeof ESTADO_PROPIEDAD]?.label}
                       </Badge>
-                      <span className="text-sm font-semibold text-gray-900">{formatPrecio(prop.precio)}</span>
+                      <span className="text-xs sm:text-sm font-semibold text-gray-900 whitespace-nowrap">{formatPrecio(prop.precio)}</span>
                     </div>
                   </Link>
                 ))
@@ -217,10 +217,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Contactos recientes */}
-          <div className="card mt-6">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h2 className="font-semibold text-gray-900">Últimos leads</h2>
-              <Link href="/contactos" className="text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1">
+          <div className="card mt-4 sm:mt-6">
+            <div className="flex items-center justify-between px-4 sm:px-5 py-3 sm:py-4 border-b border-gray-100">
+              <h2 className="font-semibold text-gray-900 text-sm sm:text-base">Últimos leads</h2>
+              <Link href="/contactos" className="text-xs sm:text-sm text-brand-600 hover:text-brand-700 font-medium flex items-center gap-1 p-1 -m-1">
                 Ver todos <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>

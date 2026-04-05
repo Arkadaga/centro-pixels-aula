@@ -14,11 +14,11 @@ interface ModalProps {
 }
 
 const sizes = {
-  sm: 'max-w-md',
-  md: 'max-w-lg',
-  lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
-  full: 'max-w-6xl',
+  sm: 'sm:max-w-md',
+  md: 'sm:max-w-lg',
+  lg: 'sm:max-w-2xl',
+  xl: 'sm:max-w-3xl',
+  full: 'sm:max-w-5xl',
 }
 
 export default function Modal({ open, onClose, title, children, size = 'md', footer }: ModalProps) {
@@ -47,18 +47,21 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
       className="modal-overlay animate-fade-in"
       onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
     >
-      <div className={cn('modal-content animate-slide-in', sizes[size])}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+      <div className={cn('modal-content', sizes[size])}>
+        {/* Header - sticky */}
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 sm:py-4 border-b border-gray-200 sticky top-0 bg-white z-10 rounded-t-2xl">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 pr-4">{title}</h3>
+          <button onClick={onClose} className="p-2 -mr-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors flex-shrink-0">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="px-6 py-5">
+        {/* Body */}
+        <div className="px-4 sm:px-6 py-4 sm:py-5">
           {children}
         </div>
+        {/* Footer - sticky */}
         {footer && (
-          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 px-4 sm:px-6 py-3.5 sm:py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl sticky bottom-0">
             {footer}
           </div>
         )}

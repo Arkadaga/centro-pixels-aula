@@ -129,32 +129,32 @@ export default function ContactoDetallePage() {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+          <button onClick={() => router.back()} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 flex-shrink-0">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div>
-            <div className="flex items-center gap-3 mb-1">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <Badge className={ESTADO_CONTACTO[contacto.estado]?.color}>
                 {ESTADO_CONTACTO[contacto.estado]?.label}
               </Badge>
               <Badge className="bg-gray-100 text-gray-600">{ORIGEN_CONTACTO[contacto.origen]}</Badge>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">
               {contacto.nombre} {contacto.apellidos}
             </h1>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-11 sm:ml-0 flex-shrink-0">
           <button onClick={() => setShowEstadoModal(true)} className="btn-secondary btn-sm">Cambiar estado</button>
           <button onClick={() => setShowInteraccionModal(true)} className="btn-primary btn-sm">
-            <Plus className="w-3.5 h-3.5" /> Registrar interacción
+            <Plus className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Registrar</span> interacción
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Columna izquierda: info + historial */}
         <div className="lg:col-span-2 space-y-6">
           {/* Acciones rápidas */}
@@ -372,7 +372,7 @@ export default function ContactoDetallePage() {
         <form onSubmit={crearInteraccion} className="space-y-4">
           <div>
             <label className="label">Tipo de interacción</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {(Object.entries(TIPO_INTERACCION) as [TipoInteraccion, { label: string; icon: string }][]).map(([key, config]) => (
                 <button
                   key={key}

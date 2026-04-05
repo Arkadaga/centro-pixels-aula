@@ -30,8 +30,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <main className="lg:pl-64 transition-all duration-300">
-        <div className="p-6 lg:p-8 max-w-[1600px] mx-auto">
+      {/* pt-14 en mobile para compensar el header fijo, lg:pt-0 porque no hay header */}
+      <main className="pt-14 lg:pt-0 lg:pl-64 transition-all duration-300">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px] mx-auto">
           {children}
         </div>
       </main>

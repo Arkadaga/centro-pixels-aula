@@ -42,7 +42,6 @@ function renderCuenta() {
       ${currentUser.role === 'profesor' || currentUser.role === 'direccion' ? `
         <div class="form-group"><label>Email de notificaciones</label><input type="text" id="acc-notif-email" value="${escHtml(currentUser.notification_email || '')}" placeholder="Donde recibirás avisos de entregas"></div>
       ` : ''}
-      <div class="form-group"><label>Nueva contraseña</label><input type="password" id="acc-pass" placeholder="Dejar vacío para no cambiar"></div>
       <button class="btn btn-primary" onclick="saveCuenta()">Guardar cambios</button>
     </div>
   `;
@@ -50,7 +49,6 @@ function renderCuenta() {
 
 async function saveCuenta() {
   const name = document.getElementById('acc-name').value.trim();
-  const pass = document.getElementById('acc-pass').value.trim();
   if (!name) { toast('Nombre es obligatorio'); return; }
 
   // Upload photo if selected
@@ -63,12 +61,6 @@ async function saveCuenta() {
 
   const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
   if (error) { toast('Error: ' + error.message); return; }
-
-  // Update password if provided
-  if (pass) {
-    const { error: passErr } = await sb.auth.updateUser({ password: pass });
-    if (passErr) { toast('Error cambiando contraseña: ' + passErr.message); return; }
-  }
 
   currentUser.name = name;
   if (photoUrl) currentUser.photo_url = photoUrl;

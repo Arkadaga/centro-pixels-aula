@@ -184,7 +184,7 @@ export default function LoginPage() {
               </button>
               <button
                 onClick={() =>
-                  handleQuickAccess('kirolaria@basqueteam.eus', 'kirolaria123')
+                  handleQuickAccess('ane@basqueteam.eus', 'demo')
                 }
                 className="flex flex-col items-center gap-2 p-4 bg-white border border-gray-200 rounded-xl hover:border-red-300 hover:bg-red-50/50 transition-colors group"
               >
@@ -195,7 +195,7 @@ export default function LoginPage() {
               </button>
               <button
                 onClick={() =>
-                  handleQuickAccess('medikua@basqueteam.eus', 'medikua123')
+                  handleQuickAccess('mediku@basqueteam.eus', 'demo')
                 }
                 className="flex flex-col items-center gap-2 p-4 bg-white border border-gray-200 rounded-xl hover:border-red-300 hover:bg-red-50/50 transition-colors group"
               >

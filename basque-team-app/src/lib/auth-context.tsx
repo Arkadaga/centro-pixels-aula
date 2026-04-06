@@ -38,7 +38,7 @@ const MOCK_USERS: User[] = [
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(MOCK_USERS[0]);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading] = useState(false);
 
   const login = (email: string, _password: string): boolean => {

@@ -3,12 +3,13 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth-context';
 
-const geistSans = localFont({
+const inter = localFont({
   src: [
     { path: '../fonts/GeistVF.woff', weight: '100 900', style: 'normal' },
   ],
   variable: '--font-inter',
-  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+  display: 'swap',
+  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
 });
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="eu" className={`${geistSans.variable} antialiased`}>
+    <html lang="eu" className={`${inter.variable} antialiased`}>
       <body className="min-h-screen font-sans">
         <AuthProvider>{children}</AuthProvider>
       </body>
